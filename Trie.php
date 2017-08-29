@@ -16,7 +16,6 @@ class Trie
 {
     public $root;
     public $max_len;
-    public $count = 0;
 
     public function __construct()
     {
@@ -74,7 +73,6 @@ class Trie
         $word_len = mb_strlen($word);
 
         for ($i=0; $i<$word_len; $i++) {
-            $this->count++;
             $char = mb_substr($word, $i, 1);
 
             if (!array_key_exists($char, $node->children)) {
@@ -92,9 +90,12 @@ class Trie
     {
         $result = array();
 
-        for ($i = 0; $i < mb_strlen($text); $i++) {
-            $this->count++;
-            $filter_word = $this->search(mb_substr($text, $i, $this->max_len));
+        $str_len = mb_strlen($text);
+
+        for ($i = 0; $i <$str_len ; $i++) {
+
+            $search_word = mb_substr($text, $i, $this->max_len);
+            $filter_word = $this->search($search_word);
             if ($filter_word) {
                 $result[] = $filter_word;
             }

@@ -22,10 +22,13 @@ $serv->set(array(
 //    'group' => 'www'
 ));
 
+
 /**
  * 处理请求
  */
 $serv->on('Request', function($request, $response) {
+
+    xhprof_enable();
 
     $stime = microtime(true);
 
@@ -57,6 +60,13 @@ $serv->on('Request', function($request, $response) {
     $arr_ret['time'] = sprintf('%01.6f', $etime-$stime);
 
     $arr_ret['memory'] = (memory_get_peak_usage() / 1024 / 1024) . 'M';
+
+    $xhprof_data = xhprof_disable();
+    $XHPROF_ROOT = '/var/www/xhprof';
+    include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_lib.php";
+    include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_runs.php";
+    $xhprof_runs = new XHProfRuns_Default();
+    $run_id = $xhprof_runs->save_run($xhprof_data, "xhprof_foo");
 
     // 定义http服务信息及响应处理结果
     $response->cookie("User", "W.Y.P");
