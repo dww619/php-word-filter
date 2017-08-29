@@ -1,26 +1,23 @@
 <?php
 
+require_once 'Trie.php';
+
 // 设置内存
-ini_set('memory_limit', '128M');
+ini_set('memory_limit', '1024M');
 
-// 读取敏感词字典库
-$handle = fopen('dict.txt', 'r');
 
-// 生成空的trie-tree-filter
-$resTrie = trie_filter_new();
+$words_file = 'dict.txt';
 
-while(! feof($handle)) {
-    $item = trim(fgets($handle));
 
-    if (empty($item)) {
-        continue;
-    }
+// 初始化 trie
+$trie = new Trie();
 
-    // 把敏感词逐个加入trie-tree
-    trie_filter_store($resTrie, $item);
-}
+// 加载敏感词字典库
+$trie->load_words($words_file);
 
 // 生成trie-tree文件
 $blackword_tree = 'blackword.tree';
 
-trie_filter_save($resTrie, $blackword_tree);
+file_put_contents($blackword_tree, gzdeflate(serialize($trie), 5));
+
+echo (memory_get_usage() / 1024 / 1024) . ' M';
