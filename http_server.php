@@ -30,8 +30,6 @@ $serv->on('Request', function($request, $response) {
 
     xhprof_enable();
 
-    $stime = microtime(true);
-
     // 接收get请求参数
     $content = isset($request->post['content']) ? $request->post['content']: '';
 
@@ -52,10 +50,12 @@ $serv->on('Request', function($request, $response) {
         $trie = FilterHelper::get_trie($tree_file, $new_mtime);
 
         // 执行查找敏感词
+        $stime = microtime(true);
         $arr_ret['data'] = $trie->search_all($content);
+        $etime = microtime(true);
     }
 
-    $etime = microtime(true);
+
 
     $arr_ret['time'] = sprintf('%01.6f', $etime-$stime);
 
